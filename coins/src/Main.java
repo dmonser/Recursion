@@ -1,11 +1,14 @@
 public class Main {
     public static void main(String[] args) {
 
-        String answer = check(10);
+        String answer = check(7);
         System.out.println(answer);
     }
 
-    public static String check (int sum){       // TODO: 05.09.2022 Not working
+    public static String check (int sum){
+        if(sum == 0){
+            return "да";
+        }
         if (sum >= 3 && check(sum - 3).equals("да")){
             return "да";
         }

@@ -13,27 +13,8 @@ public class Main {
 
     public static void findPath(char[][] field, int x0, int y0) {
         char[][] path = createField(N, true);
-        int x = x0;
-        int y = y0;
-        char yes = '$';
-        path[x][y] = 'H';
-        printField(path);
 
-        while (x != 0 || y != 0) {
-            char direction = where_from(field, x, y);
-            if (direction == 'N') {
-                System.out.println("Нет такого пути :-(");
-                break;
-            } else if (direction == 'U') {
-                path[x][y] = yes;
-                y -= 1;
-            } else if (direction == 'L') {
-                path[x][y] = yes;
-                x -= 1;
-            }
-            System.out.println();
-            printField(path);
-        }
+        where_from(field, x0, y0, path);
         System.out.println();
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
@@ -41,7 +22,7 @@ public class Main {
                     System.out.print("P ");
                 } else if (j == x0 && i == y0) {
                     System.out.print("H ");
-                } else if (path[j][i] == yes) {
+                } else if (path[j][i] == 'L' || path[j][i] == 'U') {
                     System.out.print("Х ");
                 } else {
                     System.out.print(path[j][i] + " ");
@@ -51,52 +32,41 @@ public class Main {
         }
     }
 
-    public static char where_from(char[][] field, int x, int y) {
-//        Random rd = new Random();
-        char U = 'U';
-        char L = 'L';
-        char N = 'N';
-        char[] arr = new char[]{U, L};
-
-        if (x < 0 || y < 0) {
-            System.exit(404);
+    public static char where_from(char[][] field, int x, int y, char[][] memory) {
+        if (memory[x][y] != '-' && memory[x][y] != '*') {
+            return memory[x][y];
         }
 
-        if (x == 0) {
-            if (field[x][y - 1] == '-') {
-                return 'U';
-            } else {
-                return 'N';
-            }
-        }
-
-        if (y == 0) {
-            if (field[x - 1][y] == '-') {
+        if (x > 0) {
+            int left_x = x - 1;
+            int left_y = y;
+            if (left_x == 0 && left_y == 0){
+                memory[x][y] = 'L';
                 return 'L';
-            } else {
-                return 'N';
+            }
+            if (field[left_x][left_y] != '*'){
+                if (where_from(field, left_x, left_y, memory) != 'N') {
+                    memory[x][y] = 'L';
+                    return 'L';
+                }
             }
         }
-
-        if (field[x - 1][y] == '*' && field[x][y - 1] == '*') {
-            return N;
+        if (y > 0){
+            int up_x = x;
+            int up_y = y - 1;
+            if (up_x == 0 && up_y == 0){
+                memory[x][y] = 'U';
+                return 'U';
+            }
+            if (field[up_x][up_y] != '*') {
+                if (where_from(field, up_x, up_y, memory) != 'N'){
+                    memory[x][y] = 'U';
+                    return 'U';
+                }
+            }
         }
-
-        if (field[x][y - 1] == '-' && field[x - 1][y] == '-') {
-//            int index = rd.nextInt(0, 2);
-//            return arr[index];
-            return L;
-        }
-
-        if (field[x][y - 1] == '-' && field[x - 1][y] == '*') {
-            return U;
-        }
-
-        if (field[x][y - 1] == '*' && field[x - 1][y] == '-') {
-            return L;
-        }
-
-        return '!';
+        memory[x][y] = 'N';
+        return 'N';
     }
 
     public static char[][] createField(int size, boolean withCacti) {

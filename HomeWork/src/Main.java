@@ -6,29 +6,32 @@ public class Main {
 
     public static void main(String[] args) {
         char[][] field = createField(N, true);
-        printField(field);
         System.out.println();
         findPath(field, 8, 3);
     }
 
     public static void findPath(char[][] field, int x0, int y0) {
         char[][] path = createField(N, true);
+        char direction;
 
-        where_from(field, x0, y0, path);
-        System.out.println();
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (j == 0 && i == 0){
-                    System.out.print("P ");
-                } else if (j == x0 && i == y0) {
-                    System.out.print("H ");
-                } else if (path[j][i] == 'L' || path[j][i] == 'U') {
-                    System.out.print("Х ");
-                } else {
-                    System.out.print(path[j][i] + " ");
+        direction = where_from(field, x0, y0, path);
+        if (direction == 'N'){
+            System.out.println("Нет такого пути :-(");
+        } else {
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < N; j++) {
+                    if (j == 0 && i == 0) {
+                        System.out.print("P ");
+                    } else if (j == x0 && i == y0) {
+                        System.out.print("H ");
+                    } else if (path[j][i] == 'L' || path[j][i] == 'U') {
+                        System.out.print("Х ");
+                    } else {
+                        System.out.print(path[j][i] + " ");
+                    }
                 }
+                System.out.println();
             }
-            System.out.println();
         }
     }
 
@@ -40,26 +43,26 @@ public class Main {
         if (x > 0) {
             int left_x = x - 1;
             int left_y = y;
-            if (left_x == 0 && left_y == 0){
+            if (left_x == 0 && left_y == 0) {
                 memory[x][y] = 'L';
                 return 'L';
             }
-            if (field[left_x][left_y] != '*'){
+            if (field[left_x][left_y] != '*') {
                 if (where_from(field, left_x, left_y, memory) != 'N') {
                     memory[x][y] = 'L';
                     return 'L';
                 }
             }
         }
-        if (y > 0){
+        if (y > 0) {
             int up_x = x;
             int up_y = y - 1;
-            if (up_x == 0 && up_y == 0){
+            if (up_x == 0 && up_y == 0) {
                 memory[x][y] = 'U';
                 return 'U';
             }
             if (field[up_x][up_y] != '*') {
-                if (where_from(field, up_x, up_y, memory) != 'N'){
+                if (where_from(field, up_x, up_y, memory) != 'N') {
                     memory[x][y] = 'U';
                     return 'U';
                 }
